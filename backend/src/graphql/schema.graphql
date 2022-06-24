@@ -1,0 +1,54 @@
+type Query {
+  feed(filter: String, skip: Int, take: Int, orderBy: LinkOrderByInput): [Link!]!
+}
+
+type Mutation {
+  createLink(url: String!, description: String!): Link!
+  updateLink(_id: ID!, url: String, description: String): Link
+  deleteLink(_id: ID!): Link
+  signup(email: String!, name: String!, password: String!): AuthPayload
+  login(email: String!, password: String!): AuthPayload
+  vote(linkId: ID!): Vote
+}
+
+type Subscription {
+  newLink: Link
+  newVote: Vote
+}
+
+type Link {
+  _id: ID!
+  description: String!
+  url: String!
+  postedBy: User
+  votes: [Vote]
+}
+
+type AuthPayload {
+  token: String
+  user: User
+}
+
+type User {
+  _id: ID!
+  name: String!
+  email: String!
+  links: [Link!]!
+}
+
+type Vote {
+  _id: ID!
+  link: Link!
+  user: User!
+}
+
+input LinkOrderByInput {
+  description: Sort
+  url: Sort
+  createdAt: Sort
+}
+
+enum Sort {
+  asc
+  desc
+}
