@@ -11,7 +11,7 @@ git clone https://github.com/jay11125/HackerNews-GraphQL.git
 Go to the `backend` folder, install dependencies and start the server.
 
 ```sh
-cd backend
+cd backend/
 npm install
 npm start
 ```
