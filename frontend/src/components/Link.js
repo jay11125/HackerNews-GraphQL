@@ -5,21 +5,10 @@ import { useMutation, gql } from "@apollo/client";
 import { FEED_QUERY } from "./LinkList";
 
 const VOTE_MUTATION = gql`
-  mutation Vote($linkId: ID!) {
-    vote(linkId: $linkId) {
+  mutation VoteLink($linkId: ID!) {
+    voteLink(linkId: $linkId) {
       id
-      link {
-        id
-        votes {
-          id
-          user {
-            id
-          }
-        }
-      }
-      user {
-        id
-      }
+      votes
     }
   }
 `;
@@ -83,9 +72,10 @@ const Link = (props) => {
         )}
       </div>
       <div className="ml1">
-        <div>
-          {link.description} ({link.url})
-        </div>
+        <a className="link black" target="_blank" href={link.url}>
+          {link.description}
+        </a>
+        <span className="gray f11"> ({link.url})</span>
         {
           <div className="f6 lh-copy gray">
             {link.votes.length} votes | by {link.postedBy ? link.postedBy.name : "Unknown"}{" "}

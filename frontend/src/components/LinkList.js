@@ -16,12 +16,7 @@ const NEW_LINKS_SUBSCRIPTION = gql`
         id
         name
       }
-      votes {
-        id
-        user {
-          id
-        }
-      }
+      votes
     }
   }
 `;
@@ -39,12 +34,7 @@ const NEW_VOTES_SUBSCRIPTION = gql`
           id
           name
         }
-        votes {
-          id
-          user {
-            id
-          }
-        }
+        votes
       }
       user {
         id
@@ -64,12 +54,7 @@ export const FEED_QUERY = gql`
         id
         name
       }
-      votes {
-        id
-        user {
-          id
-        }
-      }
+      votes
       # count
     }
   }

@@ -13,12 +13,7 @@ const FEED_SEARCH_QUERY = gql`
         id
         name
       }
-      votes {
-        id
-        user {
-          id
-        }
-      }
+      votes
     }
   }
 `;

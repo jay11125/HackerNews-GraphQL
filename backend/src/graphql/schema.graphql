@@ -8,12 +8,12 @@ type Mutation {
   deleteLink(id: ID!): Link
   signup(email: String!, name: String!, password: String!): AuthPayload
   login(email: String!, password: String!): AuthPayload
-  vote(linkId: ID!): Vote
+  voteLink(linkId: ID!): Link!
 }
 
 type Subscription {
   newLink: Link
-  newVote: Vote
+  newVote: Link
 }
 
 type Link {
@@ -22,7 +22,7 @@ type Link {
   url: String!
   postedBy: User
   createdAt: DateTime!
-  votes: [Vote]
+  votes: [ID]
 }
 
 type AuthPayload {
@@ -35,12 +35,6 @@ type User {
   name: String!
   email: String!
   links: [Link!]!
-}
-
-type Vote {
-  id: ID!
-  link: Link!
-  user: User!
 }
 
 input LinkOrderByInput {

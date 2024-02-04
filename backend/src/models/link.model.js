@@ -5,7 +5,7 @@ const LinkSchema = new mongoose.Schema(
     description: { type: String, required: true },
     url: { type: String, required: true },
     postedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-    votes: [{ type: mongoose.Schema.Types.ObjectId, ref: "Vote" }],
+    votes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   },
   { timestamps: true }
 );

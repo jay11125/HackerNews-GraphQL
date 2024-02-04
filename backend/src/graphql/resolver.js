@@ -1,7 +1,6 @@
-const { vote } = require("../resolvers/voteResolver");
 const { signup, login } = require("../resolvers/userResolver");
 const { newLink, newVote } = require("../graphql/subscription");
-const { createLink, feed, deleteLink, updateLink } = require("../resolvers/linkResolver");
+const { createLink, feed, deleteLink, updateLink, voteLink } = require("../resolvers/linkResolver");
 
 const resolvers = {
   Query: {
@@ -14,7 +13,7 @@ const resolvers = {
     updateLink,
     signup,
     login,
-    vote,
+    voteLink,
   },
 
   Subscription: {

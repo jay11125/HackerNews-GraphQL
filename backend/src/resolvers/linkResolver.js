@@ -24,6 +24,7 @@ const createLink = async (_, args, context) => {
     description: args.description,
     url: args.url,
     postedBy: context.userId,
+    votes: [],
   });
   let link = await newLink.save();
   await UserModel.findByIdAndUpdate(context.userId, { $push: { links: link.id } });
@@ -53,4 +54,28 @@ const updateLink = async (_, args) => {
   return updatedLink;
 };
 
-module.exports = { createLink, feed, deleteLink, updateLink };
+const voteLink = async (_, args, context) => {
+  const userId = context.userId;
+
+  const tempLink = await LinkModel.findById(args.linkId);
+
+  if (tempLink.votes.includes(userId)) {
+    const link = await LinkModel.findByIdAndUpdate(
+      args.linkId,
+      { $pull: { votes: userId } },
+      { new: true }
+    );
+    pubsub.publish("NEW_VOTE", link);
+    return link;
+  }
+
+  const link = await LinkModel.findByIdAndUpdate(
+    args.linkId,
+    { $push: { votes: userId } },
+    { new: true }
+  );
+  pubsub.publish("NEW_VOTE", link);
+  return link;
+};
+
+module.exports = { createLink, feed, deleteLink, updateLink, voteLink };

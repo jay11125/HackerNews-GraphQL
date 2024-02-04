@@ -1,9 +1,9 @@
 const path = require("path");
-const cors = require("cors");
 const dotenv = require("dotenv");
 const express = require("express");
 const mongoose = require("mongoose");
 const { createServer } = require("http");
+const pubsub = require("./utils/pubsub");
 const { WebSocketServer } = require("ws");
 const getUserId = require("./utils/authenticate");
 const { useServer } = require("graphql-ws/lib/use/ws");
@@ -16,8 +16,6 @@ const { ApolloServerPluginDrainHttpServer } = require("apollo-server-core");
 dotenv.config();
 
 const app = express();
-
-app.use(cors());
 
 const httpServer = createServer(app);
 const port = process.env.PORT || 5000;
@@ -41,7 +39,7 @@ const startApolloServer = async () => {
   const server = new ApolloServer({
     schema,
     context: ({ req }) => {
-      return { ...req, userId: req && req.headers.authorization ? getUserId(req) : null };
+      return { ...req, pubsub, userId: req && req.headers.authorization ? getUserId(req) : null };
     },
     plugins: [
       ApolloServerPluginDrainHttpServer({ httpServer }),
