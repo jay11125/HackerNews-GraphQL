@@ -1,4 +1,5 @@
 const path = require("path");
+const cors = require("cors");
 const dotenv = require("dotenv");
 const express = require("express");
 const mongoose = require("mongoose");
@@ -13,7 +14,11 @@ const { mergeTypeDefs, mergeResolvers } = require("@graphql-tools/merge");
 const { ApolloServerPluginDrainHttpServer } = require("apollo-server-core");
 
 dotenv.config();
+
 const app = express();
+
+app.use(cors());
+
 const httpServer = createServer(app);
 const port = process.env.PORT || 5000;
 
@@ -27,7 +32,7 @@ const schema = makeExecutableSchema({
 
 const wsServer = new WebSocketServer({
   server: httpServer,
-  path: "/",
+  path: "/graphql",
 });
 
 const serverCleanup = useServer({ schema }, wsServer);
@@ -52,6 +57,7 @@ const startApolloServer = async () => {
     ],
     csrfPrevention: true,
   });
+
   await server.start();
   server.applyMiddleware({ app, path: "/" });
 

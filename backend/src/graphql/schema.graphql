@@ -4,8 +4,8 @@ type Query {
 
 type Mutation {
   createLink(url: String!, description: String!): Link!
-  updateLink(_id: ID!, url: String, description: String): Link
-  deleteLink(_id: ID!): Link
+  updateLink(id: ID!, url: String, description: String): Link
+  deleteLink(id: ID!): Link
   signup(email: String!, name: String!, password: String!): AuthPayload
   login(email: String!, password: String!): AuthPayload
   vote(linkId: ID!): Vote
@@ -17,10 +17,11 @@ type Subscription {
 }
 
 type Link {
-  _id: ID!
+  id: ID!
   description: String!
   url: String!
   postedBy: User
+  createdAt: DateTime!
   votes: [Vote]
 }
 
@@ -30,14 +31,14 @@ type AuthPayload {
 }
 
 type User {
-  _id: ID!
+  id: ID!
   name: String!
   email: String!
   links: [Link!]!
 }
 
 type Vote {
-  _id: ID!
+  id: ID!
   link: Link!
   user: User!
 }
@@ -52,3 +53,5 @@ enum Sort {
   asc
   desc
 }
+
+scalar DateTime

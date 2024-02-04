@@ -20,7 +20,7 @@ const signup = async (_, args) => {
   });
 
   let user = await newUser.save();
-  let token = jwt.sign({ userId: user._id }, process.env.APP_SECRET);
+  let token = jwt.sign({ userId: user.id }, process.env.APP_SECRET);
   user.token = token;
   return { user, token };
 };
@@ -32,7 +32,7 @@ const login = async (_, args) => {
   if (user) {
     const checkPassword = bcryptjs.compareSync(password, user.password);
     if (checkPassword) {
-      let token = jwt.sign({ userId: user._id }, process.env.APP_SECRET);
+      let token = jwt.sign({ userId: user.id }, process.env.APP_SECRET);
 
       return { user, token };
     } else {

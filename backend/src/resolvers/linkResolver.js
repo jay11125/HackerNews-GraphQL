@@ -26,7 +26,7 @@ const createLink = async (_, args, context) => {
     postedBy: context.userId,
   });
   let link = await newLink.save();
-  await UserModel.findByIdAndUpdate(context.userId, { $push: { links: link._id } });
+  await UserModel.findByIdAndUpdate(context.userId, { $push: { links: link.id } });
   await link.populate("postedBy");
   pubsub.publish("NEW_LINK", link);
 
@@ -34,15 +34,15 @@ const createLink = async (_, args, context) => {
 };
 
 const deleteLink = async (_, args, context) => {
-  let deletedLink = await LinkModel.findByIdAndDelete(args._id);
-  await UserModel.findByIdAndUpdate(context.userId, { $pull: { links: args._id } });
+  let deletedLink = await LinkModel.findByIdAndDelete(args.id);
+  await UserModel.findByIdAndUpdate(context.userId, { $pull: { links: args.id } });
 
   return deletedLink;
 };
 
 const updateLink = async (_, args) => {
   let updatedLink = await LinkModel.findByIdAndUpdate(
-    args._id,
+    args.id,
     {
       url: args.url,
       description: args.description,
