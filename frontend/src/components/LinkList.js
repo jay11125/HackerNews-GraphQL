@@ -46,16 +46,18 @@ const NEW_VOTES_SUBSCRIPTION = gql`
 export const FEED_QUERY = gql`
   query feed($take: Int, $skip: Int, $orderBy: LinkOrderByInput) {
     feed(take: $take, skip: $skip, orderBy: $orderBy) {
-      id
-      createdAt
-      url
-      description
-      postedBy {
+      links {
         id
-        name
+        createdAt
+        url
+        description
+        postedBy {
+          id
+          name
+        }
+        votes
       }
-      votes
-      # count
+      count
     }
   }
 `;
@@ -69,9 +71,9 @@ const getQueryVariables = (isNewPage, page) => {
 
 const getLinksToRender = (isNewPage, data) => {
   if (isNewPage) {
-    return data.feed;
+    return data.feed.links;
   }
-  const rankedLinks = data.feed.slice();
+  const rankedLinks = data.feed.links.slice();
   rankedLinks.sort((l1, l2) => l2.votes.length - l1.votes.length);
   return rankedLinks;
 };
@@ -93,14 +95,13 @@ const LinkList = ({ client }) => {
     updateQuery: (prev, { subscriptionData }) => {
       if (!subscriptionData.data) return prev;
       const newLink = subscriptionData.data.newLink;
-      const exists = prev.feed.find(({ id }) => id === newLink.id);
+      const exists = prev.feed.links.find(({ id }) => id === newLink.id);
       if (exists) return prev;
 
       return Object.assign({}, prev, {
         feed: {
-          links: [newLink, ...prev.feed],
-          count: prev.feed.length + 1,
-          __typename: prev.feed.__typename,
+          links: [newLink, ...prev.feed.links],
+          count: prev.feed.count + 1,
         },
       });
     },
@@ -134,7 +135,7 @@ const LinkList = ({ client }) => {
               <div
                 className="pointer"
                 onClick={() => {
-                  if (page <= data.feed.count / LINKS_PER_PAGE) {
+                  if (page < data.feed.count / LINKS_PER_PAGE) {
                     const nextPage = page + 1;
                     navigate(`/new/${nextPage}`);
                   }

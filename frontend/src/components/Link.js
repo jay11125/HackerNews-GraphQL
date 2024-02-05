@@ -17,16 +17,15 @@ const Link = (props) => {
   const { link } = props;
   const authToken = localStorage.getItem(AUTH_TOKEN);
 
-  const take = LINKS_PER_PAGE;
-  const skip = 0;
-  const orderBy = { createdAt: "desc" };
-
-  const [vote] = useMutation(VOTE_MUTATION, {
+  const [voteLink] = useMutation(VOTE_MUTATION, {
     variables: {
       linkId: link.id,
     },
-    update: (cache, { data: { vote } }) => {
-      const { feed } = cache.readQuery({
+    update: (cache, { data: { voteLink } }) => {
+      const take = LINKS_PER_PAGE;
+      const skip = 0;
+      const orderBy = { createdAt: "desc" };
+      const data = cache.readQuery({
         query: FEED_QUERY,
         variables: {
           take,
@@ -35,11 +34,11 @@ const Link = (props) => {
         },
       });
 
-      const updatedLinks = feed.map((feedLink) => {
+      const updatedLinks = data.feed.links.map((feedLink) => {
         if (feedLink.id === link.id) {
           return {
             ...feedLink,
-            votes: [...feedLink.votes, vote],
+            votes: voteLink.votes,
           };
         }
         return feedLink;
@@ -64,14 +63,16 @@ const Link = (props) => {
   return (
     <div className="flex mt2 items-start">
       <div className="flex items-center">
-        <span className="gray">{props.index + 1}.</span>
+        <span className="gray" style={{ width: "30px", textAlign: "right" }}>
+          {props.index + 1}.
+        </span>
         {authToken && (
-          <div className="ml1 gray f11" style={{ cursor: "pointer" }} onClick={vote}>
+          <div className="ml1 gray f11 pointer" onClick={() => voteLink()}>
             ▲
           </div>
         )}
       </div>
-      <div className="ml1">
+      <div className="ml2">
         <a className="link black" target="_blank" href={link.url}>
           {link.description}
         </a>

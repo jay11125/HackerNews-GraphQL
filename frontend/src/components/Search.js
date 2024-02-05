@@ -5,15 +5,17 @@ import Link from "./Link";
 const FEED_SEARCH_QUERY = gql`
   query FeedSearchQuery($filter: String!) {
     feed(filter: $filter) {
-      id
-      url
-      description
-      createdAt
-      postedBy {
+      links {
         id
-        name
+        url
+        description
+        createdAt
+        postedBy {
+          id
+          name
+        }
+        votes
       }
-      votes
     }
   }
 `;
@@ -29,7 +31,8 @@ const Search = () => {
         <input type="text" onChange={(e) => setSearchFilter(e.target.value)} />
         <button onClick={() => executeSearch({ variables: { filter: searchFilter } })}>OK</button>
       </div>
-      {data && data.feed.map((link, index) => <Link key={link.id} link={link} index={index} />)}
+      {data &&
+        data.feed.links.map((link, index) => <Link key={link.id} link={link} index={index} />)}
     </>
   );
 };

@@ -13,10 +13,11 @@ const feed = async (_, args) => {
     : {};
   let links = await LinkModel.find(where)
     .limit(args.take)
-    .skip(args.skip * args.take)
+    .skip(args.skip)
     .sort(args.orderBy)
     .populate("postedBy");
-  return links;
+  let count = await LinkModel.count(where);
+  return { links, count };
 };
 
 const createLink = async (_, args, context) => {
