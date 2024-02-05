@@ -1,4 +1,3 @@
-import React from "react";
 import CreateLink from "./CreateLink";
 import Header from "./Header";
 import LinkList from "./LinkList";

@@ -65,7 +65,7 @@ const voteLink = async (_, args, context) => {
       args.linkId,
       { $pull: { votes: userId } },
       { new: true }
-    );
+    ).populate("postedBy");
     pubsub.publish("NEW_VOTE", link);
     return link;
   }
@@ -74,7 +74,7 @@ const voteLink = async (_, args, context) => {
     args.linkId,
     { $push: { votes: userId } },
     { new: true }
-  );
+  ).populate("postedBy");
   pubsub.publish("NEW_VOTE", link);
   return link;
 };

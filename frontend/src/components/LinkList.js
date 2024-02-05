@@ -1,7 +1,6 @@
-import React from "react";
+import { useEffect } from "react";
 import Link from "./Link";
 import { LINKS_PER_PAGE } from "../constants";
-
 import { useQuery, gql } from "@apollo/client";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -25,20 +24,14 @@ const NEW_VOTES_SUBSCRIPTION = gql`
   subscription {
     newVote {
       id
-      link {
+      url
+      description
+      createdAt
+      postedBy {
         id
-        url
-        description
-        createdAt
-        postedBy {
-          id
-          name
-        }
-        votes
+        name
       }
-      user {
-        id
-      }
+      votes
     }
   }
 `;
@@ -78,7 +71,7 @@ const getLinksToRender = (isNewPage, data) => {
   return rankedLinks;
 };
 
-const LinkList = ({ client }) => {
+const LinkList = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const isNewPage = location.pathname.includes("new");
@@ -90,26 +83,44 @@ const LinkList = ({ client }) => {
     variables: getQueryVariables(isNewPage, page),
   });
 
-  subscribeToMore({
-    document: NEW_LINKS_SUBSCRIPTION,
-    updateQuery: (prev, { subscriptionData }) => {
-      if (!subscriptionData.data) return prev;
-      const newLink = subscriptionData.data.newLink;
-      const exists = prev.feed.links.find(({ id }) => id === newLink.id);
-      if (exists) return prev;
+  useEffect(() => {
+    subscribeToMore({
+      document: NEW_LINKS_SUBSCRIPTION,
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data) return prev;
+        const newLink = subscriptionData.data.newLink;
+        const exists = prev.feed.links.find(({ id }) => id === newLink.id);
+        if (exists) return prev;
 
-      return Object.assign({}, prev, {
-        feed: {
-          links: [newLink, ...prev.feed.links],
-          count: prev.feed.count + 1,
-        },
-      });
-    },
-  });
+        return Object.assign({}, prev, {
+          feed: {
+            links: [newLink, ...prev.feed.links],
+            count: prev.feed.count + 1,
+          },
+        });
+      },
+    });
 
-  subscribeToMore({
-    document: NEW_VOTES_SUBSCRIPTION,
-  });
+    subscribeToMore({
+      document: NEW_VOTES_SUBSCRIPTION,
+      updateQuery: (prev, { subscriptionData }) => {
+        if (!subscriptionData.data) return prev;
+        const votedLink = subscriptionData.data.newVote;
+        const exists = prev.feed.links.findIndex(({ id }) => id === votedLink.id);
+        if (exists === -1) return prev;
+
+        let tempLinks = JSON.parse(JSON.stringify(prev.feed.links));
+        tempLinks[exists].votes = votedLink.votes;
+
+        return Object.assign({}, prev, {
+          feed: {
+            links: tempLinks,
+            count: prev.feed.count,
+          },
+        });
+      },
+    });
+  }, []);
 
   return (
     <>

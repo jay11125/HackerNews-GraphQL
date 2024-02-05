@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { useLazyQuery, gql } from "@apollo/client";
 import Link from "./Link";
 

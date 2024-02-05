@@ -1,4 +1,3 @@
-import React from "react";
 import { AUTH_TOKEN, LINKS_PER_PAGE } from "../constants";
 import { timeDifferenceForDate } from "../utils";
 import { useMutation, gql } from "@apollo/client";
@@ -49,6 +48,7 @@ const Link = (props) => {
         data: {
           feed: {
             links: updatedLinks,
+            count: data.feed.count,
           },
         },
         variables: {
@@ -67,13 +67,13 @@ const Link = (props) => {
           {props.index + 1}.
         </span>
         {authToken && (
-          <div className="ml1 gray f11 pointer" onClick={() => voteLink()}>
+          <div className="ml1 gray f11 pointer" onClick={voteLink}>
             ▲
           </div>
         )}
       </div>
       <div className="ml2">
-        <a className="link black" target="_blank" href={link.url}>
+        <a className="link black" target="_blank" rel="noreferrer" href={link.url}>
           {link.description}
         </a>
         <span className="gray f11"> ({link.url})</span>
