@@ -11,7 +11,7 @@ import { ApolloProvider, ApolloClient, createHttpLink, InMemoryCache } from "@ap
 import { AUTH_TOKEN } from "./constants";
 
 const httpLink = createHttpLink({
-  uri: "http://localhost:4000/graphql",
+  uri: "https://hackernews-graphql.onrender.com/graphql",
 });
 
 const authLink = setContext((_, { headers }) => {
@@ -26,7 +26,7 @@ const authLink = setContext((_, { headers }) => {
 
 const wsLink = new GraphQLWsLink(
   createClient({
-    url: "ws://localhost:4000/graphql",
+    url: "wss://hackernews-graphql.onrender.com/graphql",
     connectionParams: {
       authToken: localStorage.getItem(AUTH_TOKEN),
     },
