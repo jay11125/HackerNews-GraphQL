@@ -11,7 +11,7 @@ import { ApolloProvider, ApolloClient, createHttpLink, InMemoryCache } from "@ap
 import { AUTH_TOKEN } from "./constants";
 
 const httpLink = createHttpLink({
-  uri: "https://hackernews-graphql.onrender.com/graphql",
+  uri: "https://hackernews-graphql-api.onrender.com/graphql",
 });
 
 const authLink = setContext((_, { headers }) => {
